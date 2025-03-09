@@ -1,7 +1,10 @@
 #include "Mapa.h"
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <vector>
+#include <cmath>
+#include <queue>
+#include <unordered_map>
+#include <limits>
 
 using namespace std;
 using namespace sf;
@@ -28,7 +31,8 @@ vector<Ciudad> ciudades = {
     {"Tela", {574, 99}, sf::CircleShape(4)}             //10
 };
 
-vector<Ruta> rutas;
+vector<Ruta> rutas; // Rutas originales (solo para dibujar)
+vector<Ruta> rutasCompletas; // Rutas completas (originales + inversas, para Dijkstra)
 
 void initializeCities() {
     for (auto& city : ciudades) {
@@ -39,95 +43,28 @@ void initializeCities() {
 }
 
 void initializeRutas() {
+    // Rutas originales (solo para dibujar)
+    auto agregarRuta = [](Ciudad* origen, Ciudad* destino, vector<Vector2f> puntosMedios, float distancia) {
+        rutas.push_back({origen, destino, puntosMedios, distancia});
+        rutasCompletas.push_back({origen, destino, puntosMedios, distancia}); // Para Dijkstra
+        rutasCompletas.push_back({destino, origen, puntosMedios, distancia}); // Ruta inversa para Dijkstra
+    };
 
-    // Ruta 1: San Pedro Sula -> Siguatepeque
-    Ruta ruta5;
-    ruta5.origen = &ciudades[5]; // San Pedro Sula
-    ruta5.destino = &ciudades[2]; // Siguatepeque
-    ruta5.distancia = 130.0f;
-    ruta5.puntosMedios = {{475, 150}, {490, 250}, {490, 280}};
-    rutas.push_back(ruta5);
-
-    // Ruta 4: Siguatepeque -> Comayagua
-    Ruta ruta4;
-    ruta4.origen = &ciudades[2]; // Siguatepeque
-    ruta4.destino = &ciudades[3]; // Comayagua
-    ruta4.distancia = 42.0f;
-    ruta4.puntosMedios = {{533, 313}};
-    rutas.push_back(ruta4);
-
-    // Ruta 6: Comayagua -> Tegucigalpa
-    Ruta ruta6;
-    ruta6.origen = &ciudades[3]; // Comayagua
-    ruta6.destino = &ciudades[0]; // Tegucigalpa
-    ruta6.distancia = 244.0f;
-    ruta6.puntosMedios = {{542, 340}, {545, 345}, {570, 344}, {575, 356}};
-    rutas.push_back(ruta6);
-
-    // Ruta 2: San Pedro Sula -> El Progreso
-    Ruta ruta2;
-    ruta2.origen = &ciudades[5]; // San Pedro Sula
-    ruta2.destino = &ciudades[8]; // El Progreso
-    ruta2.distancia = 28.0f;
-    ruta2.puntosMedios = {{480, 145}};
-    rutas.push_back(ruta2);
-
-    // Ruta 7: El Progreso -> Tela
-    Ruta ruta7;
-    ruta7.origen = &ciudades[8]; // El Progreso
-    ruta7.destino = &ciudades[10]; // Tela
-    ruta7.distancia = 71.0f;
-    ruta7.puntosMedios = {{519, 141}, {540, 132}, {550, 104}};
-    rutas.push_back(ruta7);
-
-    // Ruta 8: Tela -> La Ceiba
-    Ruta ruta8;
-    ruta8.origen = &ciudades[10]; // Tela
-    ruta8.destino = &ciudades[9]; // La Ceiba
-    ruta8.distancia = 103.0f;
-    ruta8.puntosMedios = {{590, 120}, {610, 125}, {640, 107}};
-    rutas.push_back(ruta8);
-    
-    // Ruta 9: San Pedro Sula -> Choloma
-    Ruta ruta9;
-    ruta9.origen = &ciudades[5]; // San Pedro Sula
-    ruta9.destino = &ciudades[7]; // Choloma
-    ruta9.distancia = 15.0f; 
-    ruta9.puntosMedios = {{485, 130}};
-    rutas.push_back(ruta9);
-
-    // Ruta 10: Choloma -> Puerto Cortés
-    Ruta ruta10;
-    ruta10.origen = &ciudades[7]; // Choloma
-    ruta10.destino = &ciudades[6]; // Puerto Cortés
-    ruta10.distancia = 55.0f; 
-    ruta10.puntosMedios = {{494, 100},{505, 93}}; 
-    rutas.push_back(ruta10);
-
-    // Ruta 11: Tegucigalpa -> Choluteca
-    Ruta ruta11;
-    ruta11.origen = &ciudades[0]; // Tegucigalpa
-    ruta11.destino = &ciudades[1]; // Choluteca
-    ruta11.distancia = 139.0f; 
-    ruta11.puntosMedios = {{600, 405},{597, 412}, {615, 434},{621, 483}};
-    rutas.push_back(ruta11);
-
-    // Ruta 12: San Pedro Sula -> Copán
-    Ruta ruta12;
-    ruta12.origen = &ciudades[5]; // San Pedro Sula
-    ruta12.destino = &ciudades[4]; // Copán
-    ruta12.distancia = 180.0f; 
-    ruta12.puntosMedios = {{450, 170}, {400, 180}, {350, 220}}; 
-    rutas.push_back(ruta12);
+    // Definir todas las rutas originales
+    agregarRuta(&ciudades[5], &ciudades[2], {{475, 150}, {490, 250}, {490, 280}}, 130.0f); // San Pedro Sula -> Siguatepeque
+    agregarRuta(&ciudades[2], &ciudades[3], {{533, 313}}, 42.0f); // Siguatepeque -> Comayagua
+    agregarRuta(&ciudades[3], &ciudades[0], {{542, 340}, {545, 345}, {570, 344}, {575, 356}}, 244.0f); // Comayagua -> Tegucigalpa
+    agregarRuta(&ciudades[5], &ciudades[8], {{480, 145}}, 28.0f); // San Pedro Sula -> El Progreso
+    agregarRuta(&ciudades[8], &ciudades[10], {{519, 141}, {540, 132}, {550, 104}}, 71.0f); // El Progreso -> Tela
+    agregarRuta(&ciudades[10], &ciudades[9], {{590, 120}, {610, 125}, {640, 107}}, 103.0f); // Tela -> La Ceiba
+    agregarRuta(&ciudades[5], &ciudades[7], {{485, 130}}, 15.0f); // San Pedro Sula -> Choloma
+    agregarRuta(&ciudades[7], &ciudades[6], {{494, 100},{505, 93}}, 55.0f); // Choloma -> Puerto Cortés
+    agregarRuta(&ciudades[0], &ciudades[1], {{600, 405},{597, 412}, {615, 434},{621, 483}}, 139.0f); // Tegucigalpa -> Choluteca
+    agregarRuta(&ciudades[5], &ciudades[4], {{450, 170}, {400, 180}, {350, 220}}, 180.0f); // San Pedro Sula -> Copán
 }
 
 // Función para calcular la posición del carrito en la ruta
-Vector2f calcularPosicionCarrito(const Ruta& ruta, float progreso) {
-    // Unir todos los puntos de la ruta (origen + puntos intermedios + destino)
-    vector<Vector2f> puntos = {ruta.origen->posicion};
-    puntos.insert(puntos.end(), ruta.puntosMedios.begin(), ruta.puntosMedios.end());
-    puntos.push_back(ruta.destino->posicion);
-
+Vector2f calcularPosicionCarrito(const vector<Vector2f>& puntos, float progreso) {
     // Calcular la distancia total de la ruta
     float distanciaTotal = 0.0f;
     for (size_t i = 1; i < puntos.size(); ++i) {
@@ -150,8 +87,75 @@ Vector2f calcularPosicionCarrito(const Ruta& ruta, float progreso) {
         distanciaActual -= segmentoDistancia;
     }
 
-    return ruta.destino->posicion; // Si el progreso es 1, devolver el destino
+    return puntos.back(); // Si el progreso es 1, devolver el último punto
 }
+
+// Algoritmo de Dijkstra para encontrar la ruta más corta
+vector<Ciudad*> dijkstra(Ciudad* origen, Ciudad* destino) {
+    // Estructuras para almacenar distancias y predecesores
+    unordered_map<Ciudad*, float> distancias;
+    unordered_map<Ciudad*, Ciudad*> predecesores;
+    for (auto& ciudad : ciudades) {
+        distancias[&ciudad] = numeric_limits<float>::infinity();
+    }
+    distancias[origen] = 0.0f;
+
+    // Cola de prioridad para seleccionar el nodo con la menor distancia
+    auto comparar = [](pair<Ciudad*, float> a, pair<Ciudad*, float> b) {
+        return a.second > b.second;
+    };
+    priority_queue<pair<Ciudad*, float>, vector<pair<Ciudad*, float>>, decltype(comparar)> cola(comparar);
+    cola.push({origen, 0.0f});
+
+    while (!cola.empty()) {
+        Ciudad* actual = cola.top().first;
+        cola.pop();
+
+        if (actual == destino) break; // Llegamos al destino
+
+        // Explorar vecinos (rutas desde la ciudad actual)
+        for (auto& ruta : rutasCompletas) {
+            if (ruta.origen == actual) {
+                float nuevaDistancia = distancias[actual] + ruta.distancia;
+                if (nuevaDistancia < distancias[ruta.destino]) {
+                    distancias[ruta.destino] = nuevaDistancia;
+                    predecesores[ruta.destino] = actual;
+                    cola.push({ruta.destino, nuevaDistancia});
+                }
+            }
+        }
+    }
+
+    // Reconstruir la ruta desde el destino hasta el origen
+    vector<Ciudad*> ruta;
+    for (Ciudad* ciudad = destino; ciudad != nullptr; ciudad = predecesores[ciudad]) {
+        ruta.push_back(ciudad);
+    }
+    reverse(ruta.begin(), ruta.end()); // Invertir para obtener origen -> destino
+
+    return ruta;
+}
+
+// Función para obtener todos los puntos de una ruta (origen + puntos medios + destino)
+vector<Vector2f> obtenerPuntosRuta(const vector<Ciudad*>& ruta) {
+    vector<Vector2f> puntos;
+    for (size_t i = 0; i < ruta.size(); ++i) {
+        puntos.push_back(ruta[i]->posicion); // Agregar la posición de la ciudad
+
+        // Si hay una ruta entre esta ciudad y la siguiente, agregar los puntos medios
+        if (i < ruta.size() - 1) {
+            for (auto& r : rutasCompletas) {
+                if (r.origen == ruta[i] && r.destino == ruta[i + 1]) {
+                    puntos.insert(puntos.end(), r.puntosMedios.begin(), r.puntosMedios.end());
+                    break;
+                }
+            }
+        }
+    }
+    return puntos;
+}
+
+
 
 void Mapa::run() {
     sf::RenderWindow window(sf::VideoMode(1250, 600), "Mapa de Honduras");
@@ -214,6 +218,10 @@ void Mapa::run() {
     sf::Sprite refresh;
     refresh.setTexture(refreshT);
     refresh.setPosition(180, 30);
+    
+    sf::Sprite carroButton;
+    carroButton.setTexture(carT);
+    carroButton.setPosition(25, 260);
 
     sf::Sprite car;
     car.setTexture(carT);
@@ -228,7 +236,8 @@ void Mapa::run() {
 
     Ciudad* selectedOrigin = nullptr;
     Ciudad* selectedDestination = nullptr;
-    Ruta* rutaSeleccionada = nullptr;
+    vector<Ciudad*> rutaCalculada;
+    vector<Vector2f> puntosRuta;
     float tiempoTranscurrido = 0.0f;
     const float duracionViaje = 10.0f; // 10 segundos para llegar al destino
 
@@ -251,14 +260,10 @@ void Mapa::run() {
                                 selectedDestination = &city;
                                 nodoDestino.setString(city.nombre);
 
-                                // Buscar la ruta seleccionada
-                                for (auto& ruta : rutas) {
-                                    if (ruta.origen == selectedOrigin && ruta.destino == selectedDestination) {
-                                        rutaSeleccionada = &ruta;
-                                        tiempoTranscurrido = 0.0f; // Reiniciar el tiempo
-                                        break;
-                                    }
-                                }
+                                // Calcular la ruta usando Dijkstra
+                                rutaCalculada = dijkstra(selectedOrigin, selectedDestination);
+                                puntosRuta = obtenerPuntosRuta(rutaCalculada);
+                                tiempoTranscurrido = 0.0f; // Reiniciar el tiempo
                             }
                             break;
                         }
@@ -267,7 +272,8 @@ void Mapa::run() {
                     if (refresh.getGlobalBounds().contains(mousePos)) {
                         selectedOrigin = nullptr;
                         selectedDestination = nullptr;
-                        rutaSeleccionada = nullptr;
+                        rutaCalculada.clear();
+                        puntosRuta.clear();
                         nodoOrigen.setString("");
                         nodoDestino.setString("");
                     }
@@ -276,10 +282,10 @@ void Mapa::run() {
         }
 
         // Actualizar la posición del carrito
-        if (rutaSeleccionada && tiempoTranscurrido < duracionViaje) {
+        if (!puntosRuta.empty() && tiempoTranscurrido < duracionViaje) {
             tiempoTranscurrido += 0.016f; // Aproximadamente 1 frame (60 FPS)
             float progreso = tiempoTranscurrido / duracionViaje;
-            car.setPosition(calcularPosicionCarrito(*rutaSeleccionada, progreso));
+            car.setPosition(calcularPosicionCarrito(puntosRuta, progreso));
         }
 
         window.clear();
@@ -290,29 +296,31 @@ void Mapa::run() {
             window.draw(city.shape);
         }
 
-        // Dibujar rutas con líneas gruesas
+        // Dibujar solo las rutas originales
         for (auto& route : rutas) {
-            vector<Vector2f> puntos = {route.origen->posicion};
-            puntos.insert(puntos.end(), route.puntosMedios.begin(), route.puntosMedios.end());
-            puntos.push_back(route.destino->posicion);
+            sf::VertexArray lines(sf::LineStrip, 2 + route.puntosMedios.size());
+            lines[0].position = route.origen->posicion;
+            lines[0].color = sf::Color::Red;
 
-            for (size_t i = 1; i < puntos.size(); ++i) {
-                sf::RectangleShape linea(Vector2f(std::hypot(puntos[i].x - puntos[i - 1].x, puntos[i].y - puntos[i - 1].y), 3));
-                linea.setPosition(puntos[i - 1]);
-                linea.setFillColor(sf::Color::Red);
-                float angulo = std::atan2(puntos[i].y - puntos[i - 1].y, puntos[i].x - puntos[i - 1].x) * 180 / 3.14159265;
-                linea.setRotation(angulo);
-                window.draw(linea);
+            for (size_t i = 0; i < route.puntosMedios.size(); ++i) {
+                lines[i + 1].position = route.puntosMedios[i];
+                lines[i + 1].color = sf::Color::Red;
             }
+
+            lines[lines.getVertexCount() - 1].position = route.destino->posicion;
+            lines[lines.getVertexCount() - 1].color = sf::Color::Red;
+
+            window.draw(lines);
         }
 
-        // Dibujar el carrito si hay una ruta seleccionada
-        if (rutaSeleccionada) {
+        // Dibujar el carrito si hay una ruta calculada
+        if (!puntosRuta.empty()) {
             window.draw(car);
         }
 
         window.draw(refresh);
         window.draw(car);
+        window.draw(carroButton);
         window.draw(calcularButton);
         window.draw(calcularTxt);
         window.draw(destTxt);
