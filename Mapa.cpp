@@ -28,10 +28,34 @@ vector<Ciudad> ciudades = {
     {"Choloma", {483, 120}, sf::CircleShape(4)},        //7
     {"El Progreso", {510, 159}, sf::CircleShape(4)},    //8
     {"La Ceiba", {675, 100}, sf::CircleShape(4)},       //9
-    {"Tela", {574, 99}, sf::CircleShape(4)}             //10
+    {"Tela", {574, 99}, sf::CircleShape(4)},             //10
+    {"Santa Barbara", {487, 235}, sf::CircleShape(4)},	//11
+    {"La Entrada", {356, 220}, sf::CircleShape(4)},		//12
+    {"Omoa", {475, 103}, sf::CircleShape(4)},			//13
+    {"La Lima", {495, 152}, sf::CircleShape(4)},		//14
+    {"Santa Rosa de Copan", {355, 260}, sf::CircleShape(4)},			//15
+    {"Gracias", {387, 292}, sf::CircleShape(4)},						//16
+    {"La Esperanza", {450, 340}, sf::CircleShape(4)},					//17
+    {"Marcala", {474, 366}, sf::CircleShape(4)},						//18
+    {"La Paz", {530, 335}, sf::CircleShape(4)},							//19
+    {"Nuevo Ocotepeque", {290, 315}, sf::CircleShape(4)},				//20
+    {"San Lorenzo", {567, 484}, sf::CircleShape(4)},					//21
+    {"Yuscaran", {662, 397}, sf::CircleShape(4)},					//22
+    {"Talanga", {628, 325}, sf::CircleShape(4)},					//23
+    {"Guaimaca", {662, 300}, sf::CircleShape(4)},					//24
+    {"Santa Rita", {500, 185}, sf::CircleShape(4)},					//25
+    {"Morazan", {545, 170}, sf::CircleShape(4)},					//26
+    {"Yoro", {615, 203}, sf::CircleShape(4)},					//27
+    {"Olanchito", {710, 145}, sf::CircleShape(4)},					//28
+    {"Juticalpa", {811, 256}, sf::CircleShape(4)},					//29
+    {"Catacamas", {847, 237}, sf::CircleShape(4)},					//30
+    {"Sonaguera", {753, 125}, sf::CircleShape(4)},					//31
+    {"Tocoa", {790, 129}, sf::CircleShape(4)},					//32
+    {"Trujillo", {806, 78}, sf::CircleShape(4)},					//33
+	{"Nacaome", {561, 465}, sf::CircleShape(4)},					//34
 };
 
-vector<Ruta> rutas; // Rutas originales (solo para dibujar)
+vector<Ruta> rutas; //rutas
 vector<Ruta> rutasCompletas; // Rutas completas (originales + inversas, para Dijkstra)
 
 void initializeCities() {
@@ -43,7 +67,7 @@ void initializeCities() {
 }
 
 void initializeRutas() {
-    // Rutas originales (solo para dibujar)
+    // Rutas originales 
     auto agregarRuta = [](Ciudad* origen, Ciudad* destino, vector<Vector2f> puntosMedios, float distancia) {
         rutas.push_back({origen, destino, puntosMedios, distancia});
         rutasCompletas.push_back({origen, destino, puntosMedios, distancia}); // Para Dijkstra
@@ -51,17 +75,33 @@ void initializeRutas() {
     };
 
     // Definir todas las rutas originales
-    agregarRuta(&ciudades[5], &ciudades[2], {{475, 150}, {490, 250}, {490, 280}}, 130.0f); // San Pedro Sula -> Siguatepeque
+    //agregarRuta(&ciudades[5], &ciudades[2], {{475, 150}, {490, 250}, {490, 280}}, 130.0f); // San Pedro Sula -> Siguatepeque
+    agregarRuta(&ciudades[5], &ciudades[11], {{475, 150},{485, 180}},83.0f); // San Pedro Sula -> Santa Barbara
+    agregarRuta(&ciudades[11], &ciudades[2], {{485, 270}, {490, 280}}, 100.0f); // Santa Barbara -> Siguatepeque
     agregarRuta(&ciudades[2], &ciudades[3], {{533, 313}}, 42.0f); // Siguatepeque -> Comayagua
     agregarRuta(&ciudades[3], &ciudades[0], {{542, 340}, {545, 345}, {570, 344}, {575, 356}}, 244.0f); // Comayagua -> Tegucigalpa
-    agregarRuta(&ciudades[5], &ciudades[8], {{480, 145}}, 28.0f); // San Pedro Sula -> El Progreso
+   // agregarRuta(&ciudades[5], &ciudades[8], {{480, 145}}, 28.0f); // San Pedro Sula -> El Progreso
+    agregarRuta(&ciudades[5], &ciudades[14], {{480, 145}}, 11.0f); // San Pedro Sula -> La Lima
+    agregarRuta(&ciudades[14], &ciudades[8], {}, 21.0f); // La Lima -> El Progreso
     agregarRuta(&ciudades[8], &ciudades[10], {{519, 141}, {540, 132}, {550, 104}}, 71.0f); // El Progreso -> Tela
     agregarRuta(&ciudades[10], &ciudades[9], {{590, 120}, {610, 125}, {640, 107}}, 103.0f); // Tela -> La Ceiba
     agregarRuta(&ciudades[5], &ciudades[7], {{485, 130}}, 15.0f); // San Pedro Sula -> Choloma
     agregarRuta(&ciudades[7], &ciudades[6], {{494, 100},{505, 93}}, 55.0f); // Choloma -> Puerto Cortés
+    agregarRuta(&ciudades[6], &ciudades[13], {{484, 97}}, 24.0f); // Puerto Cortés -> Omoa
     agregarRuta(&ciudades[0], &ciudades[1], {{600, 405},{597, 412}, {615, 434},{621, 483}}, 139.0f); // Tegucigalpa -> Choluteca
-    agregarRuta(&ciudades[5], &ciudades[4], {{450, 170}, {400, 180}, {350, 220}}, 180.0f); // San Pedro Sula -> Copán
+     agregarRuta(&ciudades[0], &ciudades[21], {{600, 405},{597, 412}, {585, 434},{580, 483}}, 92.0f); // Tegucigalpa -> San Lorenzo
+    //agregarRuta(&ciudades[5], &ciudades[4], {{450, 170}, {400, 180}, {350, 220}}, 180.0f); // San Pedro Sula -> Copán
+    agregarRuta(&ciudades[5], &ciudades[12], {{476, 150},{456, 156},{445, 170}, {405, 170}, {350, 220}}, 110.0f); // San Pedro Sula -> La Entrada
+    agregarRuta(&ciudades[12], &ciudades[4], {{350, 217},{329, 237}}, 64.0f); // La Entrada -> Copán
+    agregarRuta(&ciudades[12], &ciudades[15], {}, 45.0f); // La Entrada -> Santa Rosa de Copan
+    agregarRuta(&ciudades[15], &ciudades[16], {}, 51.0f); // Santa Rosa de Copan -> Gracias
+    agregarRuta(&ciudades[15], &ciudades[20], {}, 51.0f); // Santa Rosa de Copan -> Nuevo Ocotepeque
+    agregarRuta(&ciudades[16], &ciudades[17], {}, 96.0f); //Gracias -> La Esperanza
+	agregarRuta(&ciudades[17], &ciudades[18], {}, 52.0f); //La Esperanza -> Marcala
+	agregarRuta(&ciudades[18], &ciudades[19], {}, 36.0f); // Marcala -> La Paz
+	agregarRuta(&ciudades[19], &ciudades[3], {}, 35.0f); // La Paz -> Comayagua
 }
+
 
 // Función para calcular la posición del carrito en la ruta
 Vector2f calcularPosicionCarrito(const vector<Vector2f>& puntos, float progreso) {
@@ -239,7 +279,7 @@ void Mapa::run() {
     vector<Ciudad*> rutaCalculada;
     vector<Vector2f> puntosRuta;
     float tiempoTranscurrido = 0.0f;
-    const float duracionViaje = 10.0f; // 10 segundos para llegar al destino
+    const float duracionViaje = 40.0f; // 10 segundos para llegar al destino
 
     while (window.isOpen()) {
         sf::Event event;
