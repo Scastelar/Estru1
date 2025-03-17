@@ -2,6 +2,14 @@
 #define MAPA_H
 
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <cmath>
+#include <queue>
+#include <unordered_map>
+#include <limits>
+#include <vector>
+#include <algorithm>
+#include <fstream>
 #include <vector>
 #include <string>
 
@@ -10,6 +18,13 @@ struct Ciudad {
     sf::Vector2f posicion;
     sf::CircleShape shape;
     std::vector<std::pair<int, float>> neighbors; 
+};
+
+struct Ruta {
+    Ciudad* origen;
+    Ciudad* destino;
+    std::vector<sf::Vector2f> puntosMedios;
+    float distancia;
 };
 
 class Mapa {
