@@ -43,10 +43,12 @@ void prim(int grafo[][4], int numVertices, int INF) {
 int main() {
     int numVertices = 4;
     int INF = 99999;
-    int grafo[4][4] = { {0, 1, 4, 3},
-                        {1, 0, 0, 2},
-                        {4, 0, 0, 5},
-                        {3, 2, 5, 0} };
+    int grafo[4][4] = {
+     {0, 1, 4, 3},
+     {1, 0, 0, 2},
+      {4, 0, 0, 5},
+      {3, 2, 5, 0}
+     };
 
     prim(grafo, numVertices, INF);
     return 0;
