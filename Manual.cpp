@@ -1,12 +1,14 @@
-#include "Configuracion.h"
 #include "Inicio.h"
-#include "Manual.h"
+#include "Configuracion.h"
 #include "Historial.h"
+#include "Manual.h"
 
 using namespace sf;
 using namespace std;
 
-void Configuracion::run() {
+
+
+void Manual::run() {
     RenderWindow window(sf::VideoMode(400, 500), "Configuracion");
 
     Font font;
@@ -23,6 +25,29 @@ void Configuracion::run() {
     }
     sf::Sprite fondo(fondoTexture);
 
+    // Cargar imágenes
+    std::vector<std::string> imagePaths = {
+        "C:/Users/compu/Pictures/archivos/Sand monster.jpg",
+        "C:/Users/compu/Pictures/archivos/Cool cow.jpg",
+        "C:/Users/compu/Pictures/archivos/A.jpg"
+    };
+
+    if (imagePaths.empty()) {
+        std::cerr << "No se encontraron imágenes en la carpeta especificada." << std::endl;
+        return;
+    }
+
+    size_t currentImageIndex = 0;
+    sf::Texture texture;
+    sf::Sprite sprite;
+
+    // Cargar la primera imagen
+    if (!texture.loadFromFile(imagePaths[currentImageIndex])) {
+        std::cerr << "Error al cargar la imagen: " << imagePaths[currentImageIndex] << std::endl;
+        return;
+    }
+    sprite.setTexture(texture);
+    sprite.setPosition(100, 100);
 
     // Botón de inicio
     sf::Texture logoT;
@@ -70,38 +95,6 @@ void Configuracion::run() {
 	history.setTexture(historyT);
 	history.setPosition(300, 10);	
 
-    sf::Text opcionesRutas("Priorizar rutas cortas", font, 14);
-    opcionesRutas.setPosition(50, 80);
-    opcionesRutas.setFillColor(Color::Black);
-
-    sf::Text ajustesTrafic("Simular condiciones de tráfico", font, 14);
-    ajustesTrafic.setPosition(50, 120);
-    ajustesTrafic.setFillColor(Color::Black);
-
-    sf::RectangleShape botonRutas(sf::Vector2f(20, 20));
-    botonRutas.setPosition(10, 80);
-    botonRutas.setFillColor(Color::Red); 
-
-    sf::RectangleShape botonTrafic(sf::Vector2f(20, 20));
-    botonTrafic.setPosition(10, 120);
-    botonTrafic.setFillColor(Color::Red);
-    
-    sf::Text colorRutas("Color de Rutas: ", font, 14);
-    colorRutas.setPosition(10, 160);
-    colorRutas.setFillColor(Color::Black);
-    
-    sf::RectangleShape botonColorRutas(sf::Vector2f(20, 20));
-    botonColorRutas.setPosition(130, 160);
-    botonColorRutas.setFillColor(Color::Red);
-
-    sf::Text colorNodos("Color de Nodos:", font, 14);
-    colorNodos.setPosition(10, 200);
-    colorNodos.setFillColor(Color::Black);
-    
-     sf::RectangleShape botonColorNodos(sf::Vector2f(20, 20));
-    botonColorNodos.setPosition(130, 200);
-    botonColorNodos.setFillColor(Color::Green);
-
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -112,7 +105,6 @@ void Configuracion::run() {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 
-                    // Cerrar ventana y abrir inicio
                     if (logo.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                         window.close();
                         Inicio ventana;
@@ -120,32 +112,32 @@ void Configuracion::run() {
                         return;
                     }
                     if (history.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						window.close();
+					 window.close();
                         Historial ventana;
                         ventana.run();
                         return;
-					}
-					 if (manual.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						window.close();
-                        Manual ventana;
+					}	
+	                    // Mostrar/ocultar componentes de configuración
+	                    if (config.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+	                         window.close();
+                        Configuracion ventana;
                         ventana.run();
                         return;
-					} 
-					if (botonRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						botonRutas.setFillColor(sf::Color::Green);
-					}
-					if (botonTrafic.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						botonRutas.setFillColor(sf::Color::Green);
-					}
-					if (botonColorRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						
-					}
-					if (botonColorNodos.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						
-					}
-                }
+	                    }
+	                }
             }
         }
+
+        // Cambiar la imagen cada 3 segundos
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+        currentImageIndex = (currentImageIndex + 1) % imagePaths.size();
+
+        // Cargar la nueva imagen
+        if (!texture.loadFromFile(imagePaths[currentImageIndex])) {
+            std::cerr << "Error al cargar la imagen: " << imagePaths[currentImageIndex] << std::endl;
+            return;
+        }
+        sprite.setTexture(texture);
 
        window.clear();
 	    window.draw(fondo);
@@ -153,15 +145,7 @@ void Configuracion::run() {
 	    window.draw(config);
 	    window.draw(manual);
 	    window.draw(history);
-	    window.draw(colorRutas);
-		window.draw(opcionesRutas);
-        window.draw(ajustesTrafic);
-        window.draw(botonRutas);
-        window.draw(botonTrafic);
-        window.draw(colorRutas);
-        window.draw(colorNodos);
-        window.draw(botonColorRutas);
-        window.draw(botonColorNodos);
+	    window.draw(sprite);
 	    window.display();
 	}
 }

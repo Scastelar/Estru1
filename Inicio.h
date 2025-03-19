@@ -2,6 +2,12 @@
 #define INICIO_H
 
 #include <iostream>
+#include <SFML/Graphics.hpp>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <chrono>
+#include <thread>
 #include "Configuracion.h"
 #include "Mapa.h"
 

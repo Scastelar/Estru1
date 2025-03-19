@@ -6,7 +6,19 @@
 using namespace sf;
 using namespace std;
 
-void Configuracion::run() {
+void eliminarTexto(const std::string& archivo) {
+    std::ofstream ofs(archivo, std::ofstream::trunc);
+    ofs.close();
+}
+
+std::string cargarArchivo(const std::string& archivo) {
+    std::ifstream file(archivo);
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return buffer.str();
+}
+
+void Historial::run() {
     RenderWindow window(sf::VideoMode(400, 500), "Configuracion");
 
     Font font;
@@ -70,37 +82,18 @@ void Configuracion::run() {
 	history.setTexture(historyT);
 	history.setPosition(300, 10);	
 
-    sf::Text opcionesRutas("Priorizar rutas cortas", font, 14);
-    opcionesRutas.setPosition(50, 80);
-    opcionesRutas.setFillColor(Color::Black);
 
-    sf::Text ajustesTrafic("Simular condiciones de tráfico", font, 14);
-    ajustesTrafic.setPosition(50, 120);
-    ajustesTrafic.setFillColor(Color::Black);
-
-    sf::RectangleShape botonRutas(sf::Vector2f(20, 20));
-    botonRutas.setPosition(10, 80);
-    botonRutas.setFillColor(Color::Red); 
-
-    sf::RectangleShape botonTrafic(sf::Vector2f(20, 20));
-    botonTrafic.setPosition(10, 120);
-    botonTrafic.setFillColor(Color::Red);
-    
-    sf::Text colorRutas("Color de Rutas: ", font, 14);
-    colorRutas.setPosition(10, 160);
-    colorRutas.setFillColor(Color::Black);
-    
-    sf::RectangleShape botonColorRutas(sf::Vector2f(20, 20));
-    botonColorRutas.setPosition(130, 160);
-    botonColorRutas.setFillColor(Color::Red);
-
-    sf::Text colorNodos("Color de Nodos:", font, 14);
-    colorNodos.setPosition(10, 200);
-    colorNodos.setFillColor(Color::Black);
-    
-     sf::RectangleShape botonColorNodos(sf::Vector2f(20, 20));
-    botonColorNodos.setPosition(130, 200);
-    botonColorNodos.setFillColor(Color::Green);
+	//Historial
+	string archivo = cargarArchivo("historial.txt");
+	Text text(archivo, font, 12);
+	text.setFillColor(sf::Color::Black);
+	text.setPosition(10, 70);
+	RectangleShape button(sf::Vector2f(105, 30));
+	button.setFillColor(sf::Color::Red);
+	button.setPosition(290, 70);
+	Text buttonText("Eliminar historial", font, 13);
+	buttonText.setFillColor(sf::Color::White);
+	buttonText.setPosition(295, 75);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -112,56 +105,42 @@ void Configuracion::run() {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 
-                    // Cerrar ventana y abrir inicio
                     if (logo.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                         window.close();
                         Inicio ventana;
                         ventana.run();
                         return;
                     }
-                    if (history.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                    if (config.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
 						window.close();
-                        Historial ventana;
+                        Configuracion ventana;
                         ventana.run();
                         return;
 					}
+					if (button.getGlobalBounds().contains(mousePos)) {
+                    eliminarTexto("historial.txt");
+                    archivo = cargarArchivo("historial.txt"); // Actualizar el contenido
+                    text.setString(archivo);
+                }  
 					 if (manual.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
 						window.close();
                         Manual ventana;
                         ventana.run();
                         return;
-					} 
-					if (botonRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						botonRutas.setFillColor(sf::Color::Green);
 					}
-					if (botonTrafic.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						botonRutas.setFillColor(sf::Color::Green);
-					}
-					if (botonColorRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						
-					}
-					if (botonColorNodos.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						
-					}
-                }
+	                }
             }
         }
 
-       window.clear();
+        window.clear();
 	    window.draw(fondo);
 	    window.draw(logo);
 	    window.draw(config);
 	    window.draw(manual);
 	    window.draw(history);
-	    window.draw(colorRutas);
-		window.draw(opcionesRutas);
-        window.draw(ajustesTrafic);
-        window.draw(botonRutas);
-        window.draw(botonTrafic);
-        window.draw(colorRutas);
-        window.draw(colorNodos);
-        window.draw(botonColorRutas);
-        window.draw(botonColorNodos);
+    	window.draw(text);
+    	window.draw(button);
+    	window.draw(buttonText);
 	    window.display();
 	}
 }

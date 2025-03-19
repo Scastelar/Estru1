@@ -6,43 +6,42 @@ using namespace sf;
 vector<Ruta> rutas;
 vector<Ruta> rutasCompletas;
 
-
 vector<Ciudad> ciudades = {
-    {"Tegucigalpa", {602, 373}, CircleShape(4)},
-    {"Choluteca", {607, 501}, CircleShape(4)},
-    {"Siguatepeque", {525, 300}, CircleShape(4)},
-    {"Comayagua", {536, 319}, CircleShape(4)},
-    {"Copan", {295, 250}, CircleShape(4)},
-    {"San Pedro Sula", {479, 135}, CircleShape(4)},
-    {"Puerto Cortes", {490, 85}, CircleShape(4)},
-    {"Choloma", {483, 120}, CircleShape(4)},
-    {"El Progreso", {510, 159}, CircleShape(4)},
-    {"La Ceiba", {675, 100}, CircleShape(4)},
-    {"Tela", {574, 99}, CircleShape(4)},
-    {"Santa Barbara", {487, 235}, CircleShape(4)},
-    {"La Entrada", {356, 220}, CircleShape(4)},
-    {"Omoa", {475, 103}, CircleShape(4)},
-    {"La Lima", {495, 152}, CircleShape(4)},
-    {"Santa Rosa de Copan", {355, 260}, CircleShape(4)},
-    {"Gracias", {387, 292}, CircleShape(4)},
-    {"La Esperanza", {450, 340}, CircleShape(4)},
-    {"Marcala", {474, 366}, CircleShape(4)},
-    {"La Paz", {530, 335}, CircleShape(4)},
-    {"Nuevo Ocotepeque", {290, 315}, CircleShape(4)},
-    {"San Lorenzo", {567, 484}, CircleShape(4)},
-    {"Yuscaran", {662, 397}, CircleShape(4)},
-    {"Talanga", {628, 325}, CircleShape(4)},
-    {"Guaimaca", {662, 300}, CircleShape(4)},
-    {"Santa Rita", {500, 185}, CircleShape(4)},
-    {"Morazan", {545, 170}, CircleShape(4)},
-    {"Yoro", {615, 203}, CircleShape(4)},
-    {"Olanchito", {710, 145}, CircleShape(4)},
-    {"Juticalpa", {811, 256}, CircleShape(4)},
-    {"Catacamas", {847, 237}, CircleShape(4)},
-    {"Sonaguera", {753, 125}, CircleShape(4)},
-    {"Tocoa", {790, 129}, CircleShape(4)},
-    {"Trujillo", {806, 78}, CircleShape(4)},
-    {"Nacaome", {561, 465}, CircleShape(4)}
+    {"Tegucigalpa", {602, 373}, CircleShape(4)},	//0
+    {"Choluteca", {607, 501}, CircleShape(4)},		//1
+    {"Siguatepeque", {525, 300}, CircleShape(4)},	//2
+    {"Comayagua", {536, 319}, CircleShape(4)},		//3
+    {"Copan", {295, 250}, CircleShape(4)},			//4
+    {"San Pedro Sula", {479, 135}, CircleShape(4)},	//5
+    {"Puerto Cortes", {490, 85}, CircleShape(4)},	//6
+    {"Choloma", {483, 120}, CircleShape(4)},		//7
+    {"El Progreso", {510, 159}, CircleShape(4)},	//8
+    {"La Ceiba", {675, 100}, CircleShape(4)},		//9
+    {"Tela", {574, 99}, CircleShape(4)},			//10
+    {"Santa Barbara", {487, 235}, CircleShape(4)},	//11
+    {"La Entrada", {356, 220}, CircleShape(4)},		//12
+    {"Omoa", {475, 103}, CircleShape(4)},			//13
+    {"La Lima", {495, 152}, CircleShape(4)},		//14
+    {"Santa Rosa de Copan", {355, 260}, CircleShape(4)},	//15
+    {"Gracias", {387, 292}, CircleShape(4)},				//16
+    {"La Esperanza", {450, 340}, CircleShape(4)},			//17
+    {"Marcala", {474, 366}, CircleShape(4)},				//18
+    {"La Paz", {530, 335}, CircleShape(4)},					//19
+    {"Nuevo Ocotepeque", {290, 315}, CircleShape(4)},		//20
+    {"San Lorenzo", {567, 484}, CircleShape(4)},			//21
+    {"Yuscaran", {662, 397}, CircleShape(4)},				//22
+    {"Talanga", {628, 325}, CircleShape(4)},				//23
+    {"Guaimaca", {662, 300}, CircleShape(4)},				//24
+    {"Santa Rita", {500, 185}, CircleShape(4)},				//25
+    {"Morazan", {545, 170}, CircleShape(4)},				//26
+    {"Yoro", {615, 203}, CircleShape(4)},					//27
+    {"Olanchito", {710, 145}, CircleShape(4)},				//28
+    {"Juticalpa", {811, 256}, CircleShape(4)},				//29
+    {"Catacamas", {847, 237}, CircleShape(4)},				//30
+    {"Sonaguera", {753, 125}, CircleShape(4)},				//31
+    {"Tocoa", {790, 129}, CircleShape(4)},					//32
+    {"Trujillo", {806, 78}, CircleShape(4)},				//33
+    {"Nacaome", {561, 465}, CircleShape(4)}					//34
 };
 
 void initializeCities() {
@@ -63,12 +62,12 @@ void initializeRutas() {
         rutasCompletas.push_back({destino, origen, puntosMediosInversos, distancia});
     };
 
-    agregarRuta(&ciudades[5], &ciudades[11], {{475, 150}, {485, 180}}, 83.0f);
+    agregarRuta(&ciudades[5], &ciudades[11], {{475, 150}, {485, 180}}, 92.0f);
     agregarRuta(&ciudades[11], &ciudades[2], {{485, 270}, {490, 280}}, 100.0f);
     agregarRuta(&ciudades[2], &ciudades[3], {{533, 313}}, 42.0f);
     agregarRuta(&ciudades[3], &ciudades[0], {{542, 340}, {545, 345}, {570, 344}, {575, 356}}, 86.0f);
-    agregarRuta(&ciudades[5], &ciudades[14], {{480, 145}}, 11.0f);
-    agregarRuta(&ciudades[14], &ciudades[8], {}, 21.0f);
+    agregarRuta(&ciudades[5], &ciudades[14], {{480, 145}}, 25.0f);
+    agregarRuta(&ciudades[14], &ciudades[8], {}, 35.0f);
     agregarRuta(&ciudades[8], &ciudades[10], {{519, 141}, {540, 132}, {550, 104}}, 71.0f);
     agregarRuta(&ciudades[10], &ciudades[9], {{590, 120}, {610, 125}, {640, 107}}, 103.0f);
     agregarRuta(&ciudades[5], &ciudades[7], {{485, 130}}, 15.0f);
@@ -84,15 +83,15 @@ void initializeRutas() {
     agregarRuta(&ciudades[15], &ciudades[16], {{372, 263}, {377, 270}}, 51.0f);
     agregarRuta(&ciudades[16], &ciudades[17], {{400, 310}, {405, 320}, {415, 330}}, 96.0f);
     agregarRuta(&ciudades[17], &ciudades[18], {{465, 340}, {470, 345}}, 52.0f);
-    agregarRuta(&ciudades[18], &ciudades[19], {{480, 366}, {505, 347}, {527, 345}}, 36.0f);
-    agregarRuta(&ciudades[19], &ciudades[3], {}, 35.0f);
-    agregarRuta(&ciudades[25], &ciudades[26], {{515, 190}, {530, 173}}, 20.0f);
+    agregarRuta(&ciudades[18], &ciudades[19], {{480, 366}, {505, 347}, {527, 345}}, 66.0f);
+    agregarRuta(&ciudades[19], &ciudades[3], {}, 24.0f);
+    agregarRuta(&ciudades[25], &ciudades[26], {{515, 190}, {530, 173}}, 38.0f);
     agregarRuta(&ciudades[26], &ciudades[27], {{585, 175}, {590, 197}, {595, 196}}, 40.0f);
-    agregarRuta(&ciudades[26], &ciudades[23], {{585, 175}, {590, 197}, {587, 220}, {592, 235}, {615, 243}, {605, 273}, {628, 300}}, 65.0f);
+    agregarRuta(&ciudades[26], &ciudades[23], {{585, 175}, {590, 197}, {587, 220}, {592, 235}, {615, 243}, {605, 273}, {628, 300}}, 52.0f);
     agregarRuta(&ciudades[27], &ciudades[23], {{605, 200}, {590, 197}, {587, 220}, {592, 235}, {615, 243}, {605, 273}, {628, 300}}, 110.0f);
-    agregarRuta(&ciudades[8], &ciudades[25], {}, 12.0f);
+    agregarRuta(&ciudades[8], &ciudades[25], {}, 20.0f);
     agregarRuta(&ciudades[25], &ciudades[11], {{500, 190}, {488, 214}}, 85.0f);
-    agregarRuta(&ciudades[0], &ciudades[23], {{609, 355}, {609, 335}, {625, 320}}, 52.0f);
+    agregarRuta(&ciudades[0], &ciudades[23], {{609, 355}, {609, 335}, {625, 320}}, 61.0f);
     agregarRuta(&ciudades[23], &ciudades[24], {{640, 310}}, 45.0f);
     agregarRuta(&ciudades[24], &ciudades[29], {{692, 297}, {791, 266}}, 85.0f);
     agregarRuta(&ciudades[29], &ciudades[30], {{827, 250}}, 43.0f);
@@ -218,17 +217,20 @@ vector<Vector2f> obtenerPuntosRuta(const vector<Ciudad*>& ruta) {
     return puntos;
 }
 
-void guardarHistorial(const string& origen, const string& destino) {
-    ofstream archivo("historial.txt", ios::app);
+void guardarHistorial(const string& origen, const string& destino, float tiempoEstimado, bool esBus) {
+    ofstream archivo("historial.txt", ios::app); // Abre el archivo en modo append
     if (archivo.is_open()) {
         archivo << "Viaje de " << origen << " a " << destino << endl;
+        archivo << "Tiempo estimado: " << static_cast<int>(tiempoEstimado) << " minutos" << endl;
+        archivo << "Transporte: " << (esBus ? "Bus" : "Carro") << endl;
+        archivo << "-------------------------" << endl; // Separador para mejor legibilidad
         archivo.close();
     } else {
         cerr << "Error al abrir el archivo de historial." << endl;
     }
 }
 
-float calcularTiempoEstimado(const vector<Ciudad*>& rutaCalculada, float velocidadPromedio) {
+float calcularTiempoEstimado(const vector<Ciudad*>& rutaCalculada, float velocidadPromedio, bool tieneParada) {
     float distanciaTotal = 0.0f;
 
     // Sumar las distancias de todas las rutas que componen la ruta calculada
@@ -246,7 +248,14 @@ float calcularTiempoEstimado(const vector<Ciudad*>& rutaCalculada, float velocid
     }
 
     // Calcular el tiempo estimado en minutos
-    return (distanciaTotal / velocidadPromedio) * 60.0f;
+    float tiempoEstimado = (distanciaTotal / velocidadPromedio) * 60.0f;
+
+    // Si hay una parada, sumar 30 minutos
+    if (tieneParada) {
+        tiempoEstimado += 30.0f;
+    }
+
+    return tiempoEstimado;
 }
 
 void Mapa::run() {
@@ -277,9 +286,13 @@ void Mapa::run() {
     Text destTxt("Destino:", font, 17);
     destTxt.setPosition(20, 180);
     destTxt.setFillColor(Color::Black);
-    
+
+    Text paradaTxt("Parada:", font, 17);
+    paradaTxt.setPosition(20, 270);
+    paradaTxt.setFillColor(Color::Black);
+
     Text tiempoEstimadoTxt("", font, 17);
-    tiempoEstimadoTxt.setPosition(10, 320); 
+    tiempoEstimadoTxt.setPosition(10, 400);
     tiempoEstimadoTxt.setFillColor(Color::Black);
 
     RectangleShape origenCampo(Vector2f(200, 40));
@@ -298,6 +311,14 @@ void Mapa::run() {
     nodoDestino.setPosition(25, 210);
     nodoDestino.setFillColor(Color::Black);
 
+    RectangleShape paradaCampo(Vector2f(200, 40));
+    paradaCampo.setPosition(20, 295);
+    paradaCampo.setFillColor(Color::White);
+
+    Text nodoParada(" ", font, 17);
+    nodoParada.setPosition(25, 300);
+    nodoParada.setFillColor(Color::Black);
+
     Texture refreshT;
     if (!refreshT.loadFromFile("refresh.png")) {
         cerr << "Error al cargar la imagen\n";
@@ -309,7 +330,7 @@ void Mapa::run() {
         cerr << "Error al cargar la imagen\n";
         return;
     }
-    
+
     Texture busT;
     if (!busT.loadFromFile("bus.png")) {
         cerr << "Error al cargar la imagen\n";
@@ -318,30 +339,31 @@ void Mapa::run() {
 
     // Botones
     sf::RectangleShape inicio(sf::Vector2f(50, 50));
-    inicio.setPosition(25, 25); 
-    inicio.setFillColor(sf::Color(0,0,0,0)); 
-    
+    inicio.setPosition(25, 25);
+    inicio.setFillColor(sf::Color(0,0,0,0));
+
     Sprite refresh;
     refresh.setTexture(refreshT);
     refresh.setPosition(180, 30);
-    
+
     Sprite carroButton;
     carroButton.setTexture(carT);
-    carroButton.setPosition(25, 260);
+    carroButton.setPosition(25, 350);
 
     Sprite car;
     car.setTexture(carT);
     car.setOrigin(car.getLocalBounds().width / 2, car.getLocalBounds().height / 2);
 
     RectangleShape calcularButton(Vector2f(125, 30));
-    calcularButton.setPosition(80, 262);
+    calcularButton.setPosition(80, 352);
     calcularButton.setFillColor(Color(176, 92, 85));
     Text calcularTxt("Calcular ruta", font, 17);
     calcularTxt.setFillColor(Color::White);
-    calcularTxt.setPosition(85, 265);
+    calcularTxt.setPosition(85, 355);
 
     Ciudad* selectedOrigin = nullptr;
     Ciudad* selectedDestination = nullptr;
+    Ciudad* selectedParada = nullptr;
     vector<Ciudad*> rutaCalculada;
     vector<Vector2f> puntosRuta;
     float tiempoTranscurrido = 0.0f;
@@ -350,9 +372,9 @@ void Mapa::run() {
     vector<vector<Ciudad*>> rutasDisponibles;
     int rutaSeleccionada = -1;
     bool mostrandoMenu = false;
-	vector<float> tiemposEstimados; 
-	
-	bool paradaBus = false;
+    vector<float> tiemposEstimados;
+
+    bool paradaBus = false;
 
     while (window.isOpen()) {
         Event event;
@@ -374,61 +396,79 @@ void Mapa::run() {
                                 nodoDestino.setString(city.nombre);
 
                                 rutasDisponibles = encontrarTresRutasMasCortas(selectedOrigin, selectedDestination);
-                                 tiemposEstimados.clear();
-                                 
-                                 for (const auto& ruta : rutasDisponibles) {
-                                    float tiempoEstimado = calcularTiempoEstimado(ruta, 40.0f); // Velocidad promedio de 60 km/h
+                                tiemposEstimados.clear();
+
+                                for (const auto& ruta : rutasDisponibles) {
+                                    float tiempoEstimado = calcularTiempoEstimado(ruta, 40.0f, paradaBus && selectedParada != nullptr);
                                     tiemposEstimados.push_back(tiempoEstimado);
                                 }
-                                
-								mostrandoMenu = true;
+
+                                mostrandoMenu = true;
                                 rutaSeleccionada = (rutasDisponibles.size() == 1) ? 0 : -1; // Si solo hay una ruta, seleccionarla automáticamente
+                            } else if (paradaBus && !selectedParada) {
+                                selectedParada = &city;
+                                nodoParada.setString(city.nombre);
+
+                                // Recalcular el tiempo estimado con la parada
+                                if (selectedOrigin && selectedDestination) {
+                                    for (size_t i = 0; i < rutasDisponibles.size(); ++i) {
+                                        tiemposEstimados[i] = calcularTiempoEstimado(rutasDisponibles[i], 40.0f, true);
+                                    }
+                                }
                             }
                             break;
                         }
                     }
-                    
+
                     if (inicio.getGlobalBounds().contains(mousePos)){
-                    	window.close();
-                    	Inicio ventana;
-                    	ventana.run();
-                    	return;
-					}
+                        window.close();
+                        Inicio ventana;
+                        ventana.run();
+                        return;
+                    }
 
                     if (refresh.getGlobalBounds().contains(mousePos)) {
-					    selectedOrigin = nullptr;
-					    selectedDestination = nullptr;
-					    rutaCalculada.clear();
-					    puntosRuta.clear();
-					    nodoOrigen.setString("");
-					    nodoDestino.setString("");
-					    mostrandoMenu = false;
-					    rutasCompletas.clear();
-					    initializeRutas();
-					    tiempoEstimadoTxt.setString("");
-					}
-					
-					if (carroButton.getGlobalBounds().contains(mousePos)) {
-						paradaBus = !paradaBus;
-						carroButton.setTexture(carT);
-					}
+                        selectedOrigin = nullptr;
+                        selectedDestination = nullptr;
+                        selectedParada = nullptr;
+                        rutaCalculada.clear();
+                        puntosRuta.clear();
+                        nodoOrigen.setString("");
+                        nodoDestino.setString("");
+                        nodoParada.setString("");
+                        mostrandoMenu = false;
+                        rutasCompletas.clear();
+                        initializeRutas();
+                        tiempoEstimadoTxt.setString("");
+                    }
+
+                    if (carroButton.getGlobalBounds().contains(mousePos)) {
+                        paradaBus = !paradaBus;
+                        carroButton.setTexture(paradaBus ? busT : carT);
+
+                        // Limpiar la parada si se desactiva el modo bus
+                        if (!paradaBus) {
+                            selectedParada = nullptr;
+                            nodoParada.setString("");
+                        }
+                    }
 
                     if (calcularButton.getGlobalBounds().contains(mousePos)) {
-					    if (mostrandoMenu && (rutaSeleccionada != -1 || rutasDisponibles.size() == 1)) {
-					        rutaCalculada = rutasDisponibles[(rutasDisponibles.size() == 1) ? 0 : rutaSeleccionada];
-					        puntosRuta = obtenerPuntosRuta(rutaCalculada);
-					        tiempoTranscurrido = 0.0f;
-					        mostrandoMenu = false;
-					
-					        // Calcular y mostrar el tiempo estimado
-					        float velocidadPromedio = 40.0f; // Velocidad promedio en km/h
-					        float tiempoEstimado = calcularTiempoEstimado(rutaCalculada, velocidadPromedio);
-					        tiempoEstimadoTxt.setString("\nTiempo estimado: " + to_string(static_cast<int>(tiempoEstimado)) + " minutos");
-					
-					        // Guardar el historial
-					        guardarHistorial(selectedOrigin->nombre, selectedDestination->nombre);
-					    }
-					}
+                        if (mostrandoMenu && (rutaSeleccionada != -1 || rutasDisponibles.size() == 1)) {
+                            rutaCalculada = rutasDisponibles[(rutasDisponibles.size() == 1) ? 0 : rutaSeleccionada];
+                            puntosRuta = obtenerPuntosRuta(rutaCalculada);
+                            tiempoTranscurrido = 0.0f;
+                            mostrandoMenu = false;
+
+                            // Calcular y mostrar el tiempo estimado
+                            float velocidadPromedio = 40.0f; // Velocidad promedio en km/h
+                            float tiempoEstimado = calcularTiempoEstimado(rutaCalculada, velocidadPromedio, paradaBus && selectedParada != nullptr);
+                            tiempoEstimadoTxt.setString("\nTiempo estimado: " + to_string(static_cast<int>(tiempoEstimado)) + " minutos");
+
+                            // Guardar el historial
+                            guardarHistorial(selectedOrigin->nombre, selectedDestination->nombre, tiempoEstimado, paradaBus);
+                        }
+                    }
                 }
             }
 
@@ -449,12 +489,10 @@ void Mapa::run() {
             tiempoTranscurrido += 0.016f;
             float progreso = tiempoTranscurrido / duracionViaje;
             car.setPosition(calcularPosicionCarrito(puntosRuta, progreso));
-        	
-            }
+        }
 
         window.clear();
         window.draw(fondo);
-        
 
         for (auto& city : ciudades) {
             window.draw(city.shape);
@@ -488,75 +526,76 @@ void Mapa::run() {
             }
         }
 
-if (!puntosRuta.empty()) {
-    // Calcular la distancia total de la ruta (esto se hace una sola vez)
-    static float distanciaTotal = 0.0f;
-    if (distanciaTotal == 0.0f) {
-        for (size_t i = 1; i < puntosRuta.size(); ++i) {
-            distanciaTotal += hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+        if (!puntosRuta.empty()) {
+            // Calcular la distancia total de la ruta (esto se hace una sola vez)
+            static float distanciaTotal = 0.0f;
+            if (distanciaTotal == 0.0f) {
+                for (size_t i = 1; i < puntosRuta.size(); ++i) {
+                    distanciaTotal += hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+                }
+            }
+
+            // Calcular la distancia recorrida por el carrito
+            float distanciaRecorrida = (tiempoTranscurrido / duracionViaje) * distanciaTotal;
+
+            // Dibujar la parte ya recorrida en negro
+            VertexArray lineaRecorrida(LineStrip, 0);
+            float distanciaAcumulada = 0.0f;
+
+            for (size_t i = 1; i < puntosRuta.size(); ++i) {
+                float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+
+                // Verificar si el carrito está en este segmento
+                if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+                    // Calcular el punto intermedio donde el carrito está actualmente
+                    float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+                    Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+
+                    // Dibujar la línea negra hasta el punto intermedio
+                    lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
+                    lineaRecorrida.append(Vertex(puntoIntermedio, Color::Black));
+                    break;
+                } else {
+                    // Dibujar la línea negra completa para este segmento
+                    lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
+                    lineaRecorrida.append(Vertex(puntosRuta[i], Color::Black));
+                    distanciaAcumulada += segmentoDistancia;
+                }
+            }
+            window.draw(lineaRecorrida);
+
+            // Dibujar la parte por recorrer en verde
+            VertexArray lineaPorRecorrer(LineStrip, 0);
+            bool carritoEncontrado = false;
+
+            for (size_t i = 1; i < puntosRuta.size(); ++i) {
+                float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+
+                // Verificar si el carrito está en este segmento
+                if (!carritoEncontrado && distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+                    // Calcular el punto intermedio donde el carrito está actualmente
+                    float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+                    Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+
+                    // Dibujar la línea verde desde el punto intermedio hasta el final del segmento
+                    lineaPorRecorrer.append(Vertex(puntoIntermedio, Color::Green));
+                    lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
+                    carritoEncontrado = true;
+                } else if (carritoEncontrado) {
+                    // Dibujar la línea verde completa para los segmentos restantes
+                    lineaPorRecorrer.append(Vertex(puntosRuta[i - 1], Color::Green));
+                    lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
+                }
+                distanciaAcumulada += segmentoDistancia;
+            }
+            window.draw(lineaPorRecorrer);
+
+            // Dibujar el carrito
+            Vector2f posicionCarrito = calcularPosicionCarrito(puntosRuta, tiempoTranscurrido / duracionViaje);
+            car.setPosition(posicionCarrito);
+            window.draw(car);            
         }
-    }
 
-    // Calcular la distancia recorrida por el carrito
-    float distanciaRecorrida = (tiempoTranscurrido / duracionViaje) * distanciaTotal;
-
-    // Dibujar la parte ya recorrida en negro
-    VertexArray lineaRecorrida(LineStrip, 0);
-    float distanciaAcumulada = 0.0f;
-
-    for (size_t i = 1; i < puntosRuta.size(); ++i) {
-        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-
-        // Verificar si el carrito está en este segmento
-        if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
-            // Calcular el punto intermedio donde el carrito está actualmente
-            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
-            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
-
-            // Dibujar la línea negra hasta el punto intermedio
-            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
-            lineaRecorrida.append(Vertex(puntoIntermedio, Color::Black));
-            break;
-        } else {
-            // Dibujar la línea negra completa para este segmento
-            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
-            lineaRecorrida.append(Vertex(puntosRuta[i], Color::Black));
-            distanciaAcumulada += segmentoDistancia;
-        }
-    }
-    window.draw(lineaRecorrida);
-
-    // Dibujar la parte por recorrer en verde
-    VertexArray lineaPorRecorrer(LineStrip, 0);
-    bool carritoEncontrado = false;
-
-    for (size_t i = 1; i < puntosRuta.size(); ++i) {
-        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-
-        // Verificar si el carrito está en este segmento
-        if (!carritoEncontrado && distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
-            // Calcular el punto intermedio donde el carrito está actualmente
-            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
-            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
-
-            // Dibujar la línea verde desde el punto intermedio hasta el final del segmento
-            lineaPorRecorrer.append(Vertex(puntoIntermedio, Color::Green));
-            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
-            carritoEncontrado = true;
-        } else if (carritoEncontrado) {
-            // Dibujar la línea verde completa para los segmentos restantes
-            lineaPorRecorrer.append(Vertex(puntosRuta[i - 1], Color::Green));
-            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
-        }
-        distanciaAcumulada += segmentoDistancia;
-    }
-    window.draw(lineaPorRecorrer);
-
-    // Dibujar el carrito
-    Vector2f posicionCarrito = calcularPosicionCarrito(puntosRuta, tiempoTranscurrido / duracionViaje);
-    car.setPosition(posicionCarrito);
-    window.draw(car);
-}
         window.draw(refresh);
         window.draw(inicio);
         window.draw(carroButton);
@@ -568,26 +607,20 @@ if (!puntosRuta.empty()) {
         window.draw(destCampo);
         window.draw(nodoOrigen);
         window.draw(nodoDestino);
-        window.draw(tiempoEstimadoTxt); 
-        
-        if (paradaBus){
-        	carroButton.setTexture(busT);
-        	selectedOrigin = nullptr;
-			selectedDestination = nullptr;
-			rutaCalculada.clear();
-			puntosRuta.clear();
-			nodoOrigen.setString("");
-			nodoDestino.setString("");
-			mostrandoMenu = false;
-			rutasCompletas.clear();
-			initializeRutas();
-			tiempoEstimadoTxt.setString("");
-		}
+
+        // Mostrar el campo de parada solo si paradaBus es true
+        if (paradaBus) {
+            window.draw(paradaTxt);
+            window.draw(paradaCampo);
+            window.draw(nodoParada);
+        }
+
+        window.draw(tiempoEstimadoTxt);
 
         if (mostrandoMenu) {
             string textoMenu = (rutasDisponibles.size() == 1) ? "Ruta disponible: 0" : "Seleccione una ruta (0-" + to_string(rutasDisponibles.size() - 1) + "):";
             Text menuTxt(textoMenu, font, 20);
-            menuTxt.setPosition(10, 300);
+            menuTxt.setPosition(10, 380);
             menuTxt.setFillColor(Color::Black);
             window.draw(menuTxt);
         }
