@@ -369,7 +369,7 @@ void Mapa::run() {
     vector<Ciudad*> rutaCalculada;
     vector<Vector2f> puntosRuta;
     float tiempoTranscurrido = 0.0f;
-    const float duracionViaje = 40.0f;
+    const float duracionViaje = 150.0f;
 
     vector<vector<Ciudad*>> rutasDisponibles;
     int rutaSeleccionada = -1;
@@ -529,68 +529,83 @@ void Mapa::run() {
         }
 
        if (!puntosRuta.empty()) {
-    static float distanciaTotal = 0.0f;
-    if (distanciaTotal == 0.0f) {
-        for (size_t i = 1; i < puntosRuta.size(); ++i) {
-            distanciaTotal += hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-        }
-    }
-
-    // Calcular la distancia recorrida por el carrito
-    float distanciaRecorrida = (tiempoTranscurrido / duracionViaje) * distanciaTotal;
-
-    // Dibujar la parte ya recorrida en negro
-    VertexArray lineaRecorrida(LineStrip, 0);
-    float distanciaAcumulada = 0.0f;
-
-    for (size_t i = 1; i < puntosRuta.size(); ++i) {
-        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-
-        if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
-            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
-            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
-
-            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
-            lineaRecorrida.append(Vertex(puntoIntermedio, Color::Black));
-            break;
-        } else {
-            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
-            lineaRecorrida.append(Vertex(puntosRuta[i], Color::Black));
-            distanciaAcumulada += segmentoDistancia;
-        }
-    }
-    window.draw(lineaRecorrida);
-
-    // Dibujar la parte por recorrer en verde
-    VertexArray lineaPorRecorrer(LineStrip, 0);
-    bool carritoEncontrado = false;
-
-    // Reiniciar la distancia acumulada
-    distanciaAcumulada = 0.0f;
-
-    for (size_t i = 1; i < puntosRuta.size(); ++i) {
-        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-
-        if (!carritoEncontrado && distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
-            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
-            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
-
-            lineaPorRecorrer.append(Vertex(puntoIntermedio, Color::Green));
-            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
-            carritoEncontrado = true;
-        } else if (carritoEncontrado) {
-            lineaPorRecorrer.append(Vertex(puntosRuta[i - 1], Color::Green));
-            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
-        }
-        distanciaAcumulada += segmentoDistancia;
-    }
-    window.draw(lineaPorRecorrer);
-
-    // Dibujar el carrito
-    Vector2f posicionCarrito = calcularPosicionCarrito(puntosRuta, tiempoTranscurrido / duracionViaje);
-    car.setPosition(posicionCarrito);
-    window.draw(car);            
-}
+	    static float distanciaTotal = 0.0f;
+	    if (distanciaTotal == 0.0f) {
+	        for (size_t i = 1; i < puntosRuta.size(); ++i) {
+	            distanciaTotal += hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+	        }
+	    }
+	    float velocidadConstante = distanciaTotal / duracionViaje;
+	    float distanciaRecorrida = velocidadConstante * tiempoTranscurrido;
+	
+	    // Dibujar la parte ya recorrida 
+	    VertexArray lineaRecorrida(LineStrip, 0);
+	    float distanciaAcumulada = 0.0f;
+	
+	    for (size_t i = 1; i < puntosRuta.size(); ++i) {
+	        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+	
+	        if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+	            // Calcular el punto intermedio donde el carrito está actualmente
+	            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+	            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+	
+	            // Dibujar la línea negra hasta el punto intermedio
+	            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
+	            lineaRecorrida.append(Vertex(puntoIntermedio, Color::Black));
+	            break;
+	        } else {
+	            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
+	            lineaRecorrida.append(Vertex(puntosRuta[i], Color::Black));
+	            distanciaAcumulada += segmentoDistancia;
+	        }
+	    }
+	    window.draw(lineaRecorrida);
+	
+	    // Dibujar la parte por recorrer en verde
+	    VertexArray lineaPorRecorrer(LineStrip, 0);
+	    bool carritoEncontrado = false;
+	
+	    // Reiniciar la distancia acumulada para el segundo bucle
+	    distanciaAcumulada = 0.0f;
+	
+	    for (size_t i = 1; i < puntosRuta.size(); ++i) {
+	        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+	
+	        if (!carritoEncontrado && distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+	            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+	            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+	
+	            lineaPorRecorrer.append(Vertex(puntoIntermedio, Color::Green));
+	            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
+	            carritoEncontrado = true;
+	        } else if (carritoEncontrado) {
+	            lineaPorRecorrer.append(Vertex(puntosRuta[i - 1], Color::Green));
+	            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
+	        }
+	        distanciaAcumulada += segmentoDistancia;
+	    }
+	    window.draw(lineaPorRecorrer);
+	
+	    // Calcular la posición del carrito
+	    Vector2f posicionCarrito;
+	    distanciaAcumulada = 0.0f;
+	
+	    for (size_t i = 1; i < puntosRuta.size(); ++i) {
+	        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+	
+	        if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+	            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+	            posicionCarrito = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+	            break;
+	        }
+	        distanciaAcumulada += segmentoDistancia;
+	    }
+	
+	    // Dibujar el carrito
+	    car.setPosition(posicionCarrito);
+	    window.draw(car);
+	}
 
         window.draw(refresh);
         window.draw(inicio);
