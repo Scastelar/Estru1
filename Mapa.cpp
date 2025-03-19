@@ -1,5 +1,7 @@
 #include "Mapa.h"
 #include "Inicio.h"
+#include "Colores.h"
+#include "Cola.h"
 using namespace std;
 using namespace sf;
 
@@ -147,26 +149,26 @@ vector<Ciudad*> dijkstra(Ciudad* origen, Ciudad* destino, const vector<Ruta>& ru
     auto comparar = [](pair<Ciudad*, float> a, pair<Ciudad*, float> b) {
         return a.second > b.second;
     };
-    priority_queue<pair<Ciudad*, float>, vector<pair<Ciudad*, float>>, decltype(comparar)> cola(comparar);
-    cola.push({origen, 0.0f});
-
-    while (!cola.empty()) {
-        Ciudad* actual = cola.top().first;
-        cola.pop();
-
-        if (actual == destino) break;
-
-        for (auto& ruta : rutasDisponibles) {
-            if (ruta.origen == actual) {
-                float nuevaDistancia = distancias[actual] + ruta.distancia;
-                if (nuevaDistancia < distancias[ruta.destino]) {
-                    distancias[ruta.destino] = nuevaDistancia;
-                    predecesores[ruta.destino] = actual;
-                    cola.push({ruta.destino, nuevaDistancia});
-                }
-            }
-        }
-    }
+   //Cola de Prioridad
+	Cola<float> cola; 
+	cola.insertar(0.0f, origen); 
+	
+	while (!cola.colaVacia()) {
+	    Ciudad* actual = cola.desencolar().ciudad;
+	
+	    if (actual == destino) break;
+	
+	    for (auto& ruta : rutasDisponibles) {
+	        if (ruta.origen == actual) {
+	            float nuevaDistancia = distancias[actual] + ruta.distancia;
+	            if (nuevaDistancia < distancias[ruta.destino]) {
+	                distancias[ruta.destino] = nuevaDistancia;
+	                predecesores[ruta.destino] = actual;
+	                cola.insertar(nuevaDistancia, ruta.destino); 
+	            }
+	        }
+	    }
+	}
 
     vector<Ciudad*> ruta;
     for (Ciudad* ciudad = destino; ciudad != nullptr; ciudad = predecesores[ciudad]) {
@@ -179,17 +181,14 @@ vector<Ciudad*> dijkstra(Ciudad* origen, Ciudad* destino, const vector<Ruta>& ru
 
 vector<vector<Ciudad*>> encontrarTresRutasMasCortas(Ciudad* origen, Ciudad* destino) {
     vector<vector<Ciudad*>> rutasMasCortas;
-    vector<Ruta> rutasTemporales = rutasCompletas; // Copia temporal de las rutas completas
+    vector<Ruta> rutasTemporales = rutasCompletas;
 
     for (int i = 0; i < 3; ++i) {
-        // Encontrar la ruta más corta usando Dijkstra
         vector<Ciudad*> ruta = dijkstra(origen, destino, rutasTemporales);
-        if (ruta.empty()) break; // No hay más rutas
+        if (ruta.empty()) break; // No hay mas rutas
 
-        // Guardar la ruta encontrada
         rutasMasCortas.push_back(ruta);
 
-        // Marcar las rutas utilizadas como no disponibles para la siguiente iteración
         for (size_t j = 1; j < ruta.size(); ++j) {
             auto it = remove_if(rutasTemporales.begin(), rutasTemporales.end(), [&](const Ruta& r) {
                 return r.origen == ruta[j - 1] && r.destino == ruta[j];
@@ -217,13 +216,18 @@ vector<Vector2f> obtenerPuntosRuta(const vector<Ciudad*>& ruta) {
     return puntos;
 }
 
-void guardarHistorial(const string& origen, const string& destino, float tiempoEstimado, bool esBus) {
-    ofstream archivo("historial.txt", ios::app); // Abre el archivo en modo append
+void guardarHistorial(const string& origen, const string& destino, float tiempoEstimado, bool esBus, const string& parada) {
+    ofstream archivo("historial.txt", ios::app); 
     if (archivo.is_open()) {
         archivo << "Viaje de " << origen << " a " << destino << endl;
+        if (esBus && !parada.empty()) {
+            archivo << "Parada: " << parada << endl;
+        }
         archivo << "Tiempo estimado: " << static_cast<int>(tiempoEstimado) << " minutos" << endl;
         archivo << "Transporte: " << (esBus ? "Bus" : "Carro") << endl;
-        archivo << "-------------------------" << endl; // Separador para mejor legibilidad
+        
+
+        archivo << "-------------------------" << endl;
         archivo.close();
     } else {
         cerr << "Error al abrir el archivo de historial." << endl;
@@ -233,12 +237,11 @@ void guardarHistorial(const string& origen, const string& destino, float tiempoE
 float calcularTiempoEstimado(const vector<Ciudad*>& rutaCalculada, float velocidadPromedio, bool tieneParada) {
     float distanciaTotal = 0.0f;
 
-    // Sumar las distancias de todas las rutas que componen la ruta calculada
+    // Sumar las distancias de las rutas 
     for (size_t i = 1; i < rutaCalculada.size(); ++i) {
         Ciudad* origen = rutaCalculada[i - 1];
         Ciudad* destino = rutaCalculada[i];
 
-        // Buscar la ruta entre origen y destino en rutasCompletas
         for (const auto& ruta : rutasCompletas) {
             if (ruta.origen == origen && ruta.destino == destino) {
                 distanciaTotal += ruta.distancia; // Sumar la distancia de la ruta
@@ -247,7 +250,6 @@ float calcularTiempoEstimado(const vector<Ciudad*>& rutaCalculada, float velocid
         }
     }
 
-    // Calcular el tiempo estimado en minutos
     float tiempoEstimado = (distanciaTotal / velocidadPromedio) * 60.0f;
 
     // Si hay una parada, sumar 30 minutos
@@ -460,13 +462,12 @@ void Mapa::run() {
                             tiempoTranscurrido = 0.0f;
                             mostrandoMenu = false;
 
-                            // Calcular y mostrar el tiempo estimado
-                            float velocidadPromedio = 40.0f; // Velocidad promedio en km/h
+                            float velocidadPromedio = 40.0f; // Velocidad en km/h
                             float tiempoEstimado = calcularTiempoEstimado(rutaCalculada, velocidadPromedio, paradaBus && selectedParada != nullptr);
                             tiempoEstimadoTxt.setString("\nTiempo estimado: " + to_string(static_cast<int>(tiempoEstimado)) + " minutos");
 
                             // Guardar el historial
-                            guardarHistorial(selectedOrigin->nombre, selectedDestination->nombre, tiempoEstimado, paradaBus);
+                           guardarHistorial(selectedOrigin->nombre, selectedDestination->nombre, tiempoEstimado, paradaBus, selectedParada ? selectedParada->nombre : "");
                         }
                     }
                 }
@@ -495,24 +496,25 @@ void Mapa::run() {
         window.draw(fondo);
 
         for (auto& city : ciudades) {
-            window.draw(city.shape);
-        }
-
-        for (auto& route : rutas) {
-            VertexArray lines(LineStrip, 2 + route.puntosMedios.size());
-            lines[0].position = route.origen->posicion;
-            lines[0].color = Color::Red;
-
-            for (size_t i = 0; i < route.puntosMedios.size(); ++i) {
-                lines[i + 1].position = route.puntosMedios[i];
-                lines[i + 1].color = Color::Red;
-            }
-
-            lines[lines.getVertexCount() - 1].position = route.destino->posicion;
-            lines[lines.getVertexCount() - 1].color = Color::Red;
-
-            window.draw(lines);
-        }
+		    city.shape.setFillColor(colorCiudades); 
+		    window.draw(city.shape);
+		}
+		
+		for (auto& route : rutas) {
+		    VertexArray lines(LineStrip, 2 + route.puntosMedios.size());
+		    lines[0].position = route.origen->posicion;
+		    lines[0].color = colorRutas; 
+		
+		    for (size_t i = 0; i < route.puntosMedios.size(); ++i) {
+		        lines[i + 1].position = route.puntosMedios[i];
+		        lines[i + 1].color = colorRutas; 
+		    }
+		
+		    lines[lines.getVertexCount() - 1].position = route.destino->posicion;
+		    lines[lines.getVertexCount() - 1].color = colorRutas; 
+		
+		    window.draw(lines);
+		}
 
         if (mostrandoMenu) {
             for (size_t i = 0; i < rutasDisponibles.size(); ++i) {
@@ -526,75 +528,69 @@ void Mapa::run() {
             }
         }
 
-        if (!puntosRuta.empty()) {
-            // Calcular la distancia total de la ruta (esto se hace una sola vez)
-            static float distanciaTotal = 0.0f;
-            if (distanciaTotal == 0.0f) {
-                for (size_t i = 1; i < puntosRuta.size(); ++i) {
-                    distanciaTotal += hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-                }
-            }
-
-            // Calcular la distancia recorrida por el carrito
-            float distanciaRecorrida = (tiempoTranscurrido / duracionViaje) * distanciaTotal;
-
-            // Dibujar la parte ya recorrida en negro
-            VertexArray lineaRecorrida(LineStrip, 0);
-            float distanciaAcumulada = 0.0f;
-
-            for (size_t i = 1; i < puntosRuta.size(); ++i) {
-                float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-
-                // Verificar si el carrito está en este segmento
-                if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
-                    // Calcular el punto intermedio donde el carrito está actualmente
-                    float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
-                    Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
-
-                    // Dibujar la línea negra hasta el punto intermedio
-                    lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
-                    lineaRecorrida.append(Vertex(puntoIntermedio, Color::Black));
-                    break;
-                } else {
-                    // Dibujar la línea negra completa para este segmento
-                    lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
-                    lineaRecorrida.append(Vertex(puntosRuta[i], Color::Black));
-                    distanciaAcumulada += segmentoDistancia;
-                }
-            }
-            window.draw(lineaRecorrida);
-
-            // Dibujar la parte por recorrer en verde
-            VertexArray lineaPorRecorrer(LineStrip, 0);
-            bool carritoEncontrado = false;
-
-            for (size_t i = 1; i < puntosRuta.size(); ++i) {
-                float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
-
-                // Verificar si el carrito está en este segmento
-                if (!carritoEncontrado && distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
-                    // Calcular el punto intermedio donde el carrito está actualmente
-                    float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
-                    Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
-
-                    // Dibujar la línea verde desde el punto intermedio hasta el final del segmento
-                    lineaPorRecorrer.append(Vertex(puntoIntermedio, Color::Green));
-                    lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
-                    carritoEncontrado = true;
-                } else if (carritoEncontrado) {
-                    // Dibujar la línea verde completa para los segmentos restantes
-                    lineaPorRecorrer.append(Vertex(puntosRuta[i - 1], Color::Green));
-                    lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
-                }
-                distanciaAcumulada += segmentoDistancia;
-            }
-            window.draw(lineaPorRecorrer);
-
-            // Dibujar el carrito
-            Vector2f posicionCarrito = calcularPosicionCarrito(puntosRuta, tiempoTranscurrido / duracionViaje);
-            car.setPosition(posicionCarrito);
-            window.draw(car);            
+       if (!puntosRuta.empty()) {
+    static float distanciaTotal = 0.0f;
+    if (distanciaTotal == 0.0f) {
+        for (size_t i = 1; i < puntosRuta.size(); ++i) {
+            distanciaTotal += hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
         }
+    }
+
+    // Calcular la distancia recorrida por el carrito
+    float distanciaRecorrida = (tiempoTranscurrido / duracionViaje) * distanciaTotal;
+
+    // Dibujar la parte ya recorrida en negro
+    VertexArray lineaRecorrida(LineStrip, 0);
+    float distanciaAcumulada = 0.0f;
+
+    for (size_t i = 1; i < puntosRuta.size(); ++i) {
+        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+
+        if (distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+
+            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
+            lineaRecorrida.append(Vertex(puntoIntermedio, Color::Black));
+            break;
+        } else {
+            lineaRecorrida.append(Vertex(puntosRuta[i - 1], Color::Black));
+            lineaRecorrida.append(Vertex(puntosRuta[i], Color::Black));
+            distanciaAcumulada += segmentoDistancia;
+        }
+    }
+    window.draw(lineaRecorrida);
+
+    // Dibujar la parte por recorrer en verde
+    VertexArray lineaPorRecorrer(LineStrip, 0);
+    bool carritoEncontrado = false;
+
+    // Reiniciar la distancia acumulada
+    distanciaAcumulada = 0.0f;
+
+    for (size_t i = 1; i < puntosRuta.size(); ++i) {
+        float segmentoDistancia = hypot(puntosRuta[i].x - puntosRuta[i - 1].x, puntosRuta[i].y - puntosRuta[i - 1].y);
+
+        if (!carritoEncontrado && distanciaAcumulada + segmentoDistancia >= distanciaRecorrida) {
+            float t = (distanciaRecorrida - distanciaAcumulada) / segmentoDistancia;
+            Vector2f puntoIntermedio = puntosRuta[i - 1] + t * (puntosRuta[i] - puntosRuta[i - 1]);
+
+            lineaPorRecorrer.append(Vertex(puntoIntermedio, Color::Green));
+            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
+            carritoEncontrado = true;
+        } else if (carritoEncontrado) {
+            lineaPorRecorrer.append(Vertex(puntosRuta[i - 1], Color::Green));
+            lineaPorRecorrer.append(Vertex(puntosRuta[i], Color::Green));
+        }
+        distanciaAcumulada += segmentoDistancia;
+    }
+    window.draw(lineaPorRecorrer);
+
+    // Dibujar el carrito
+    Vector2f posicionCarrito = calcularPosicionCarrito(puntosRuta, tiempoTranscurrido / duracionViaje);
+    car.setPosition(posicionCarrito);
+    window.draw(car);            
+}
 
         window.draw(refresh);
         window.draw(inicio);
@@ -608,7 +604,6 @@ void Mapa::run() {
         window.draw(nodoOrigen);
         window.draw(nodoDestino);
 
-        // Mostrar el campo de parada solo si paradaBus es true
         if (paradaBus) {
             window.draw(paradaTxt);
             window.draw(paradaCampo);

@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <cmath>
-#include <queue>
 #include <unordered_map>
 #include <limits>
 #include <vector>
@@ -36,6 +35,7 @@ void initializeCities();
 std::vector<int> dijkstra(int start, int end); 
 
 extern std::vector<Ciudad> ciudades; 
+//extern Grafo grafoCiudades;
 
 #endif 
 

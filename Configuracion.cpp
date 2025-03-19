@@ -2,6 +2,7 @@
 #include "Inicio.h"
 #include "Manual.h"
 #include "Historial.h"
+#include "Colores.h"
 
 using namespace sf;
 using namespace std;
@@ -23,7 +24,6 @@ void Configuracion::run() {
     }
     sf::Sprite fondo(fondoTexture);
 
-
     // Botón de inicio
     sf::Texture logoT;
     if (!logoT.loadFromFile("logoSR.png")) {
@@ -44,31 +44,31 @@ void Configuracion::run() {
     config.setTexture(configT);
     config.setPosition(200, 10);
     
-	//boton de Manual
-	Text usoTxt("Manual de Uso", font, 20);
-	usoTxt.setPosition(100, 50);
-	usoTxt.setFillColor(Color::Black);
-	sf::Texture manualT;
-	if (!manualT.loadFromFile("manual.png")) {
-	    cerr << "Error al cargar la imagen\n";
-	    return;
-	}
-	sf::Sprite manual;
-	manual.setTexture(manualT);
-	manual.setPosition(100, 10);
-	
-	//boton de historial
-	Text historyTxt("Historial", font, 20);
-	historyTxt.setPosition(200, 50);
-	historyTxt.setFillColor(Color::Black);
-	sf::Texture historyT;
-	if (!historyT.loadFromFile("history.png")) {
-	    cerr << "Error al cargar la imagen\n";
-	    return;
-	}
-	sf::Sprite history;
-	history.setTexture(historyT);
-	history.setPosition(300, 10);	
+    // Botón de Manual
+    Text usoTxt("Manual de Uso", font, 20);
+    usoTxt.setPosition(100, 50);
+    usoTxt.setFillColor(Color::Black);
+    sf::Texture manualT;
+    if (!manualT.loadFromFile("manual.png")) {
+        cerr << "Error al cargar la imagen\n";
+        return;
+    }
+    sf::Sprite manual;
+    manual.setTexture(manualT);
+    manual.setPosition(100, 10);
+    
+    // Botón de historial
+    Text historyTxt("Historial", font, 20);
+    historyTxt.setPosition(200, 50);
+    historyTxt.setFillColor(Color::Black);
+    sf::Texture historyT;
+    if (!historyT.loadFromFile("history.png")) {
+        cerr << "Error al cargar la imagen\n";
+        return;
+    }
+    sf::Sprite history;
+    history.setTexture(historyT);
+    history.setPosition(300, 10);    
 
     sf::Text opcionesRutas("Priorizar rutas cortas", font, 14);
     opcionesRutas.setPosition(50, 80);
@@ -98,9 +98,15 @@ void Configuracion::run() {
     colorNodos.setPosition(10, 200);
     colorNodos.setFillColor(Color::Black);
     
-     sf::RectangleShape botonColorNodos(sf::Vector2f(20, 20));
+    sf::RectangleShape botonColorNodos(sf::Vector2f(20, 20));
     botonColorNodos.setPosition(130, 200);
     botonColorNodos.setFillColor(Color::Green);
+
+    // Colores para los botones de color
+    Color coloresRutas[3] = { Color::Red, Color::Blue, Color::Yellow };
+    Color coloresNodos[3] = { Color::Green, Color::Cyan, Color::Magenta };
+    int indexColorRutas = 0;
+    int indexColorNodos = 0;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -112,7 +118,6 @@ void Configuracion::run() {
                 if (event.mouseButton.button == sf::Mouse::Left) {
                     sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 
-                    // Cerrar ventana y abrir inicio
                     if (logo.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
                         window.close();
                         Inicio ventana;
@@ -120,41 +125,45 @@ void Configuracion::run() {
                         return;
                     }
                     if (history.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						window.close();
+                        window.close();
                         Historial ventana;
                         ventana.run();
                         return;
-					}
-					 if (manual.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						window.close();
+                    }
+                    if (manual.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                        window.close();
                         Manual ventana;
                         ventana.run();
                         return;
-					} 
-					if (botonRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						botonRutas.setFillColor(sf::Color::Green);
-					}
-					if (botonTrafic.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						botonRutas.setFillColor(sf::Color::Green);
-					}
-					if (botonColorRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						
+                    } 
+                    if (botonRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                        botonRutas.setFillColor(botonRutas.getFillColor() == Color::Red ? Color::Green : Color::Red);
+                    }
+                    if (botonTrafic.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+                        botonTrafic.setFillColor(botonTrafic.getFillColor() == Color::Red ? Color::Green : Color::Red);
+                    }
+                   if (botonColorRutas.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
+					    indexColorRutas = (indexColorRutas + 1) % 2;
+					    botonColorRutas.setFillColor(coloresRutas[indexColorRutas]);
+					    setColorRutas(coloresRutas[indexColorRutas]); 
 					}
 					if (botonColorNodos.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
-						
+					    indexColorNodos = (indexColorNodos + 1) % 4;
+					    botonColorNodos.setFillColor(coloresNodos[indexColorNodos]);
+					    setColorCiudades(coloresNodos[indexColorNodos]); 
 					}
                 }
             }
         }
 
-       window.clear();
-	    window.draw(fondo);
-	    window.draw(logo);
-	    window.draw(config);
-	    window.draw(manual);
-	    window.draw(history);
-	    window.draw(colorRutas);
-		window.draw(opcionesRutas);
+        window.clear();
+        window.draw(fondo);
+        window.draw(logo);
+        window.draw(config);
+        window.draw(manual);
+        window.draw(history);
+        window.draw(colorRutas);
+        window.draw(opcionesRutas);
         window.draw(ajustesTrafic);
         window.draw(botonRutas);
         window.draw(botonTrafic);
@@ -162,6 +171,6 @@ void Configuracion::run() {
         window.draw(colorNodos);
         window.draw(botonColorRutas);
         window.draw(botonColorNodos);
-	    window.display();
-	}
+        window.display();
+    }
 }

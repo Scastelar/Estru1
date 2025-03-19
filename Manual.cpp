@@ -25,11 +25,13 @@ void Manual::run() {
     }
     sf::Sprite fondo(fondoTexture);
 
-    // Cargar imágenes
+    // Cargar imagenes
     std::vector<std::string> imagePaths = {
-        "C:/Users/compu/Pictures/archivos/Sand monster.jpg",
-        "C:/Users/compu/Pictures/archivos/Cool cow.jpg",
-        "C:/Users/compu/Pictures/archivos/A.jpg"
+       "C:/Users/compu/Pictures/Manual/01.png",
+         "C:/Users/compu/Pictures/Manual/02.png",
+         "C:/Users/compu/Pictures/Manual/03.png",
+          "C:/Users/compu/Pictures/Manual/04.png",
+           "C:/Users/compu/Pictures/Manual/05.png"
     };
 
     if (imagePaths.empty()) {
@@ -39,15 +41,15 @@ void Manual::run() {
 
     size_t currentImageIndex = 0;
     sf::Texture texture;
-    sf::Sprite sprite;
 
     // Cargar la primera imagen
     if (!texture.loadFromFile(imagePaths[currentImageIndex])) {
         std::cerr << "Error al cargar la imagen: " << imagePaths[currentImageIndex] << std::endl;
         return;
     }
+    sf::Sprite sprite;
     sprite.setTexture(texture);
-    sprite.setPosition(100, 100);
+    sprite.setPosition(10, 100);
 
     // Botón de inicio
     sf::Texture logoT;
@@ -117,7 +119,6 @@ void Manual::run() {
                         ventana.run();
                         return;
 					}	
-	                    // Mostrar/ocultar componentes de configuración
 	                    if (config.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos))) {
 	                         window.close();
                         Configuracion ventana;
