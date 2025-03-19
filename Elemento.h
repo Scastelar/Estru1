@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Mapa.h" 
 
 using namespace std;
 
